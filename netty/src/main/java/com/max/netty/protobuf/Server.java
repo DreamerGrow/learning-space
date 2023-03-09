@@ -1,5 +1,6 @@
-package com.max.netty.chat;
+package com.max.netty.protobuf;
 
+import com.max.netty.chat.ChatServerHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -8,28 +9,26 @@ import io.netty.channel.ChannelPipeline;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.protobuf.ProtobufDecoder;
+import io.netty.handler.codec.protobuf.ProtobufEncoder;
 import io.netty.handler.codec.string.StringDecoder;
-import io.netty.handler.codec.string.StringEncoder;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
-import io.netty.handler.timeout.IdleStateHandler;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author max
  * @date 2023年03月05日 20:03
  */
-public class ChatServer {
+public class Server {
 
     private int port;
 
-    public ChatServer(int port) {
+    public Server(int port) {
         this.port = port;
     }
 
     public static void main(String[] args) throws InterruptedException {
-        new ChatServer(8009).run();
+        new Server(8010).run();
 
     }
 
@@ -38,7 +37,6 @@ public class ChatServer {
         NioEventLoopGroup bossGroup = new NioEventLoopGroup(1);
         NioEventLoopGroup workerGroup = new NioEventLoopGroup();
         try {
-            ChatServerHandler chatServerHandler = new ChatServerHandler();
             ServerBootstrap b = new ServerBootstrap()
                     .group(bossGroup, workerGroup)
                     .channel(NioServerSocketChannel.class)
@@ -49,11 +47,8 @@ public class ChatServer {
                         @Override
                         protected void initChannel(SocketChannel socketChannel) throws Exception {
                             ChannelPipeline pipeline = socketChannel.pipeline();
-                            pipeline.addLast(new StringDecoder())
-                                    .addLast(new StringEncoder())
-                                    // 心跳监测，监测channel在指定时间范围内是否有执行读写操作，若未执行会下发相应的事件给下一个handler
-                                    .addLast(new IdleStateHandler(3,3,10, TimeUnit.SECONDS))
-                                    .addLast(new ChatServerHandler())
+                            pipeline.addLast(new ProtobufDecoder(UserPo.User.getDefaultInstance()))
+                                    .addLast(new ServerHandler())
                             ;
 
                         }

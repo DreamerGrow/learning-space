@@ -1,4 +1,4 @@
-package com.max.netty;
+package com.max.netty.chat;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;

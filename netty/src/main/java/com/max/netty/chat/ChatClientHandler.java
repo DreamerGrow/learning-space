@@ -1,4 +1,4 @@
-package com.max.netty;
+package com.max.netty.chat;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;

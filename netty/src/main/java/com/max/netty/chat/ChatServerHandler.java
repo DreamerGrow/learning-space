@@ -1,4 +1,4 @@
-package com.max.netty;
+package com.max.netty.chat;
 
 import cn.hutool.core.date.DateUtil;
 import io.netty.channel.Channel;

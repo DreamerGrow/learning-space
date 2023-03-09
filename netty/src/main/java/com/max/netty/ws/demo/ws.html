@@ -1,10 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <meta charset="UTF-8">
+    <title>Title</title>
 </head>
+
+<script>
+    var socket;
+
+    // if (window.socket) {
+        socket = new WebSocket("ws://localhost:7777/websocket")
+        socket.onmessage = function (ev) {
+            var rt = document.getElementById('receive')
+            rt.value = rt.value  + '\n' + ev.data
+        }
+
+        socket.onopen = function (ev) {
+            var rt = document.getElementById('receive')
+            rt.value = '连接打开'
+        }
+
+        socket.onclose = function (ev) {
+            var rt = document.getElementById('receive')
+            rt.value = rt.value  + '\n' + '连接关闭'
+        }
+
+
+    // }else {
+    //     alert('当前浏览器不支持ws')
+    // }
+
+    function send(value) {
+        if (socket.readyState === WebSocket.OPEN) {
+            socket.send(value)
+        }
+    }
+
+</script>
+
 <body>
-$END$
+    <form onsubmit="return false">
+        <textarea name="msg" id="msg" cols="30" rows="10"></textarea>
+        <input type="button" value="发送" onclick="send(this.form.msg.value)">
+        <textarea name="receive" id="receive" cols="30" rows="10"></textarea>
+        <input type="button" value="清空" onclick="document.getElementById('receive').value = ''">
+    </form>
 </body>
 </html>
